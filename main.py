@@ -1,5 +1,4 @@
 import csv
-from os import sep
 from lxml import etree
 import random
 
@@ -23,7 +22,7 @@ class Data:
                 }
         return custom_dict
 
-class SentencePair():
+class SentencePair:
     def __init__(self, jpn_sentence, eng_sentence):
         self.jpn = jpn_sentence
         self.eng = eng_sentence
@@ -36,12 +35,10 @@ def _spoiler(str):
 
 def get_reading(word: str, *, data: Data) -> str:
     custom_dict = data.tsuneyo
-
     return custom_dict[word]['kana'] if word in custom_dict else ''
 
 def get_accent(word: str, *, data: Data) -> int:
     custom_dict = data.tsuneyo
-
     return custom_dict[word]['accent'] if word in custom_dict else 0
 
 def get_definitions(word: str, *, data: Data) -> str:
