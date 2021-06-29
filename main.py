@@ -1,6 +1,5 @@
 import csv
-from typing import Dict
-import requests
+from lxml import etree
 
 def _bold(str):
     return f"**{str}**"
@@ -8,10 +7,10 @@ def _bold(str):
 def _spoiler(str):
     return f"||{str}||"
 
-def open_tsv() -> Dict:
+def open_tsv():
     custom_dict = {}
-    with open("./pitch_data/ja_pitch_accents.tsv") as tsvfile:
-        reader = csv.DictReader(tsvfile, delimiter="\t", quotechar='"')
+    with open("./data/ja_pitch_accents.tsv") as tsv:
+        reader = csv.DictReader(tsv, delimiter="\t", quotechar='"')
         for row in reader:
             custom_dict[row['word']] = {
                 "kana": row['kana'],
@@ -31,18 +30,13 @@ def get_accent(word: str) -> int:
     return custom_dict[word]['accent'] if word in custom_dict else 0
 
 def get_definitions(word: str) -> str:
-    r = requests.get("https://jisho.org/api/v1/search/words", { "keyword": word })
-    if r.status_code != 200:
-        print(f"Request to Jisho failed.")
-        print(f"Status code: {r.status_code}")
-        print(r.reason)
-        return
+    parser = etree.XMLParser(dtd_validation=True)
+    tree: etree._ElementTree = etree.parse("./data/JMdict_e_examp.xml", parser)
+    path = f"//keb[text()='{word}']/ancestor::entry/sense/gloss | //reb[text()='{word}']/ancestor::entry/sense/gloss"
+    print(path)
+    element: list[etree._Element] = tree.xpath(path)
 
-    definitions = []
-    for row in r.json()['data'][0]['senses']:
-        definitions += row['english_definitions']
-
-    return definitions
+    return [gloss.text for gloss in element]
 
 def main():
     selected_word = input("Which word would you like to use? > ")
@@ -58,7 +52,7 @@ def main():
         wide_space +
         _spoiler(f'{reading}　[{pitch}]') +
         wide_space +
-        _spoiler(f'{"; ".join(definitions)}')
+        _spoiler(f'{", ".join(definitions)}')
     )
 
 if __name__ == "__main__":
