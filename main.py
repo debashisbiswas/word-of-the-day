@@ -1,4 +1,5 @@
 import csv
+from os import sep
 from lxml import etree
 import random
 
@@ -73,21 +74,24 @@ def main():
     pitch = get_accent(selected_word, data=sources)
     definitions = get_definitions(selected_word, data=sources)
     sentences = get_sentences(selected_word, data=sources)
-
     sentence = random.choice(sentences)
+
     wide_space = "　"
+    separator = "-" * 50
+    print(separator)
     print(_bold("今日の言葉"))
     print()
     print(
-        _bold(selected_word) +
-        wide_space +
-        _spoiler(f'{reading}　[{pitch}]') +
-        wide_space +
-        _spoiler(f'{", ".join(definitions)}')
+        _bold(selected_word)
+        + wide_space
+        + _spoiler(f'{reading}　[{pitch}]')
+        + wide_space
+        + _spoiler(f'{", ".join(definitions)}')
     )
     print()
     print(sentence.jpn)
     print(_spoiler(sentence.eng))
+    print(separator)
 
 if __name__ == "__main__":
     main()
