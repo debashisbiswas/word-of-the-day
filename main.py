@@ -33,18 +33,6 @@ def _bold(str):
 def _spoiler(str):
     return f"||{str}||"
 
-def open_tsv():
-    custom_dict = {}
-    with open("./data/ja_pitch_accents.tsv") as tsv:
-        reader = csv.DictReader(tsv, delimiter="\t", quotechar='"')
-        for row in reader:
-            custom_dict[row['word']] = {
-                "kana": row['kana'],
-                "accent": row['accent']
-            }
-
-    return custom_dict
-
 def get_reading(word: str, *, data: Data) -> str:
     custom_dict = data.get_tsuneyo()
 
