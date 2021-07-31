@@ -1,6 +1,7 @@
 import csv
 from lxml import etree
 import random
+from textwrap import dedent
 
 from discord_format import DiscordFormat
 
@@ -71,20 +72,16 @@ def main():
 
     wide_space = "　"
     separator = "-" * 50
-    print(separator)
-    print(DiscordFormat.bold("今日の言葉"))
-    print()
-    print(
-        DiscordFormat.bold(selected_word)
-        + wide_space
-        + DiscordFormat.spoiler(f'{reading}　[{pitch}]')
-        + wide_space
-        + DiscordFormat.spoiler(f'{", ".join(definitions)}')
-    )
-    print()
-    print(sentence.jpn)
-    print(DiscordFormat.spoiler(sentence.eng))
-    print(separator)
+    print(dedent(f"""
+        {separator}
+        {DiscordFormat.bold("今日の言葉")}
+
+        {DiscordFormat.bold(selected_word)}　{DiscordFormat.spoiler(f'{reading}　[{pitch}]')}　{DiscordFormat.spoiler(f'{", ".join(definitions)}')}
+
+        {sentence.jpn}
+        {DiscordFormat.spoiler(sentence.eng)}
+        {separator}
+    """))
 
 if __name__ == "__main__":
     main()
