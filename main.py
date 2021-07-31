@@ -2,6 +2,8 @@ import csv
 from lxml import etree
 import random
 
+from discord_format import DiscordFormat
+
 class Data:
     def __init__(self, *, jisho_path, tsuneyo_path):
         self.jisho = self._init_jisho(jisho_path)
@@ -26,12 +28,6 @@ class SentencePair:
     def __init__(self, jpn_sentence, eng_sentence):
         self.jpn = jpn_sentence
         self.eng = eng_sentence
-
-def _bold(str):
-    return f"**{str}**"
-
-def _spoiler(str):
-    return f"||{str}||"
 
 def get_reading(word: str, *, data: Data) -> str:
     custom_dict = data.tsuneyo
@@ -76,18 +72,18 @@ def main():
     wide_space = "　"
     separator = "-" * 50
     print(separator)
-    print(_bold("今日の言葉"))
+    print(DiscordFormat.bold("今日の言葉"))
     print()
     print(
-        _bold(selected_word)
+        DiscordFormat.bold(selected_word)
         + wide_space
-        + _spoiler(f'{reading}　[{pitch}]')
+        + DiscordFormat.spoiler(f'{reading}　[{pitch}]')
         + wide_space
-        + _spoiler(f'{", ".join(definitions)}')
+        + DiscordFormat.spoiler(f'{", ".join(definitions)}')
     )
     print()
     print(sentence.jpn)
-    print(_spoiler(sentence.eng))
+    print(DiscordFormat.spoiler(sentence.eng))
     print(separator)
 
 if __name__ == "__main__":
