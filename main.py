@@ -1,34 +1,10 @@
-import csv
 from lxml import etree
 import random
 from textwrap import dedent
 
+from data import Data
 from discord_format import DiscordFormat
-
-class Data:
-    def __init__(self, *, jisho_path, tsuneyo_path):
-        self.jisho = self._init_jisho(jisho_path)
-        self.tsuneyo = self._init_tsuneyo(tsuneyo_path)
-
-    def _init_jisho(self, path: str):
-        parser = etree.XMLParser(dtd_validation=True)
-        return etree.parse(path, parser)
-
-    def _init_tsuneyo(self, path: str):
-        custom_dict = {}
-        with open(path) as tsv:
-            reader = csv.DictReader(tsv, delimiter="\t", quotechar='"')
-            for row in reader:
-                custom_dict[row['word']] = {
-                    "kana": row['kana'],
-                    "accent": row['accent']
-                }
-        return custom_dict
-
-class SentencePair:
-    def __init__(self, jpn_sentence, eng_sentence):
-        self.jpn = jpn_sentence
-        self.eng = eng_sentence
+from sentence_pair import SentencePair
 
 def get_reading(word: str, *, data: Data) -> str:
     custom_dict = data.tsuneyo
@@ -70,7 +46,6 @@ def main():
     sentences = get_sentences(selected_word, data=sources)
     sentence = random.choice(sentences)
 
-    wide_space = "　"
     separator = "-" * 50
     print(dedent(f"""
         {separator}
