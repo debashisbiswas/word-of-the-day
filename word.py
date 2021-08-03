@@ -1,7 +1,7 @@
 from lxml import etree
 
 from data import Data
-from sentence_pair import SentencePair
+from example_sentence import ExampleSentence
 
 class Word:
     def __init__(self, word: str, *, data: Data):
@@ -26,12 +26,12 @@ class Word:
 
         return [gloss.text for gloss in element]
 
-    def _get_sentences(self) -> list[SentencePair]:
+    def _get_sentences(self) -> list[ExampleSentence]:
         path = f"//keb[text()='{self.word}']/ancestor::entry/sense/example | //reb[text()='{self.word}']/ancestor::entry/sense/example"
         examples: list[etree._Element] = self.data.jisho.xpath(path)
-        sentences: list[SentencePair] = []
+        sentences: list[ExampleSentence] = []
         for example in examples:
             jpn = example.xpath("ex_sent[@xml:lang='jpn']")[0].text
             eng = example.xpath("ex_sent[@xml:lang='eng']")[0].text
-            sentences.append(SentencePair(jpn, eng))
+            sentences.append(ExampleSentence(jpn, eng))
         return sentences

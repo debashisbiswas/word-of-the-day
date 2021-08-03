@@ -2,17 +2,16 @@ import argparse
 import random
 from textwrap import dedent
 
+from constants import Constants
 from data import Data
 from discord_format import DiscordFormat as df
 from word import Word
-
-WIDE_SPACE = "　"
 
 def _get_header_string() -> str:
     return df.bold("今日の言葉")
 
 def _get_word_string(word: Word) -> str:
-    return WIDE_SPACE.join([
+    return Constants.WIDE_SPACE.join([
         df.bold(word.word),
         df.spoiler(f"{word.reading}　[{word.pitch if word.pitch != -1 else '?'}]"),
         df.spoiler(f"{', '.join(word.definitions)}")
@@ -22,8 +21,9 @@ def _get_sentence_string(word: Word) -> str:
     if word.sentences:
         sentence = random.choice(word.sentences)
         return dedent(f"""
-            {sentence.jpn if sentence else ''}
-            {df.spoiler(sentence.eng) if sentence else ''}
+            {sentence.jpn}
+            {df.spoiler(sentence.jpn_kana)}
+            {df.spoiler(sentence.eng)}
         """).strip()
     else:
         return ""
