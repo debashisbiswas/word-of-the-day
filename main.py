@@ -1,62 +1,67 @@
-from lxml import etree
+import argparse
 import random
 from textwrap import dedent
 
 from data import Data
-from discord_format import DiscordFormat
-from sentence_pair import SentencePair
+from discord_format import DiscordFormat as df
+from word import Word
 
-def get_reading(word: str, *, data: Data) -> str:
-    custom_dict = data.tsuneyo
-    return custom_dict[word]['kana'] if word in custom_dict else ''
+WIDE_SPACE = "　"
 
-def get_accent(word: str, *, data: Data) -> int:
-    custom_dict = data.tsuneyo
-    return custom_dict[word]['accent'] if word in custom_dict else 0
+def _get_header_string() -> str:
+    return df.bold("今日の言葉")
 
-def get_definitions(word: str, *, data: Data) -> str:
-    jisho = data.jisho
-    path = f"//keb[text()='{word}']/ancestor::entry/sense/gloss | //reb[text()='{word}']/ancestor::entry/sense/gloss"
-    element: list[etree._Element] = jisho.xpath(path)
+def _get_word_string(word: Word) -> str:
+    return WIDE_SPACE.join([
+        df.bold(word.word),
+        df.spoiler(f"{word.reading}　[{word.pitch if word.pitch != -1 else '?'}]"),
+        df.spoiler(f"{', '.join(word.definitions)}")
+    ])
 
-    return [gloss.text for gloss in element]
-
-def get_sentences(word: str, *, data: Data) -> list[SentencePair]:
-    jisho = data.jisho
-    path = f"//keb[text()='{word}']/ancestor::entry/sense/example | //reb[text()='{word}']/ancestor::entry/sense/example"
-    examples: list[etree._Element] = jisho.xpath(path)
-    sentences: list[SentencePair] = []
-    for example in examples:
-        jpn = example.xpath("ex_sent[@xml:lang='jpn']")[0].text
-        eng = example.xpath("ex_sent[@xml:lang='eng']")[0].text
-        sentences.append(SentencePair(jpn, eng))
-    return sentences
+def _get_sentence_string(word: Word) -> str:
+    if word.sentences:
+        sentence = random.choice(word.sentences)
+        return dedent(f"""
+            {sentence.jpn if sentence else ''}
+            {df.spoiler(sentence.eng) if sentence else ''}
+        """).strip()
+    else:
+        return ""
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("word", nargs="?",
+                        help="selected word for word of the day message")
+    args = parser.parse_args()
+
     print("Setting up...")
     sources = Data(
         jisho_path="./data/JMdict_e_examp.xml",
         tsuneyo_path="./data/ja_pitch_accents.tsv"
     )
 
-    selected_word = input("Which word would you like to use? > ")
-    reading = get_reading(selected_word, data=sources)
-    pitch = get_accent(selected_word, data=sources)
-    definitions = get_definitions(selected_word, data=sources)
-    sentences = get_sentences(selected_word, data=sources)
-    sentence = random.choice(sentences)
+    if args.word:
+        selected_word = args.word
+    else:
+        selected_word = input("Which word would you like to use? > ")
+    print(f"Proceeding with word: {selected_word}")
+    word = Word(selected_word, data=sources)
 
-    separator = "-" * 50
-    print(dedent(f"""
-        {separator}
-        {DiscordFormat.bold("今日の言葉")}
+    output_components = []
+    output_components.append(_get_header_string())
 
-        {DiscordFormat.bold(selected_word)}　{DiscordFormat.spoiler(f'{reading}　[{pitch}]')}　{DiscordFormat.spoiler(f'{", ".join(definitions)}')}
+    if not word.definitions:
+        print(f"No definitions found for {selected_word}")
+        return
+    output_components.append(_get_word_string(word))
 
-        {sentence.jpn}
-        {DiscordFormat.spoiler(sentence.eng)}
-        {separator}
-    """))
+    if not word.sentences:
+        print(f"No example sentences found for {selected_word}")
+    else:
+        output_components.append(_get_sentence_string(word))
+
+    separator = "-" * 70
+    print(separator, '\n\n'.join(output_components), separator, sep='\n')
 
 if __name__ == "__main__":
     main()
