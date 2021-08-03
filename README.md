@@ -7,8 +7,8 @@ You must be using a version of Python 3. Install the necessary requirements with
     pip install -r requirements.txt
 
 ## Usage
-    python main.py
-When the program is run, you will be prompted to type in your word. The word must be in kana or kanji. If your word is a verb, it must be in dictionary form.
+    python main.py [word]
+The optional 'word' argument corresponds to your selected word. When the program is run, you will be prompted to type in your word if it was not specified as an argument. The word must be in kana or kanji. If your word is a verb, it must be in dictionary form.
 
 ## Output
 When your word is found, the program will contain the following information, using a common post format for the #japanese channel. 
