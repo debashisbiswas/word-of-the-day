@@ -19,4 +19,4 @@ class ExampleSentence:
                 new_token = token['hira']
             converted_tokens.append(new_token)
 
-        return Constants.WIDE_SPACE.join(converted_tokens)
+        return Constants.FULL_WIDTH_SPACE.join(converted_tokens)

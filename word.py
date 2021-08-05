@@ -22,13 +22,13 @@ class Word:
 
     def _get_definitions(self) -> str:
         path = f"//keb[text()='{self.word}']/ancestor::entry/sense/gloss | //reb[text()='{self.word}']/ancestor::entry/sense/gloss"
-        element: list[etree._Element] = self.data.jisho.xpath(path)
+        element: list[etree._Element] = self.data.jmdict.xpath(path)
 
         return [gloss.text for gloss in element]
 
     def _get_sentences(self) -> list[ExampleSentence]:
         path = f"//keb[text()='{self.word}']/ancestor::entry/sense/example | //reb[text()='{self.word}']/ancestor::entry/sense/example"
-        examples: list[etree._Element] = self.data.jisho.xpath(path)
+        examples: list[etree._Element] = self.data.jmdict.xpath(path)
         sentences: list[ExampleSentence] = []
         for example in examples:
             jpn = example.xpath("ex_sent[@xml:lang='jpn']")[0].text

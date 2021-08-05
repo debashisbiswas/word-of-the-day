@@ -11,7 +11,7 @@ def _get_header_string() -> str:
     return df.bold("今日の言葉")
 
 def _get_word_string(word: Word) -> str:
-    return Constants.WIDE_SPACE.join([
+    return Constants.FULL_WIDTH_SPACE.join([
         df.bold(word.word),
         df.spoiler(f"{word.reading}　[{word.pitch if word.pitch != -1 else '?'}]"),
         df.spoiler(f"{', '.join(word.definitions)}")
@@ -36,7 +36,7 @@ def main():
 
     print("Setting up...")
     sources = Data(
-        jisho_path="./data/JMdict_e_examp.xml",
+        jmdict_path="./data/JMdict_e_examp.xml",
         tsuneyo_path="./data/ja_pitch_accents.tsv"
     )
 

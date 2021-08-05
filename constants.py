@@ -1,2 +1,2 @@
 class Constants:
-    WIDE_SPACE = "　"
+    FULL_WIDTH_SPACE = "　"
