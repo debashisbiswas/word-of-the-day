@@ -1,4 +1,4 @@
-import csv
+from csv import DictReader
 from lxml import etree
 
 class Data:
@@ -13,7 +13,7 @@ class Data:
     def _init_tsuneyo(self, path: str):
         custom_dict = {}
         with open(path) as tsv:
-            reader = csv.DictReader(tsv, delimiter="\t", quotechar='"')
+            reader = DictReader(tsv, delimiter="\t", quotechar='"')
             for row in reader:
                 custom_dict[row['word']] = {
                     "kana": row['kana'],

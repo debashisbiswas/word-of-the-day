@@ -1,4 +1,4 @@
-import pykakasi
+from pykakasi import kakasi
 
 from constants import Constants
 
@@ -9,7 +9,14 @@ class ExampleSentence:
         self.jpn_kana = self._get_kana(self.jpn)
 
     def _get_kana(self, sentence: str) -> str:
-        kks = pykakasi.kakasi()
-        return Constants.WIDE_SPACE.join(
-            [item['hira'] for item in kks.convert(sentence)]
-        )
+        kks = kakasi()
+        converted_tokens = []
+        for token in kks.convert(sentence):
+            # Hiragana and katakana are not converted.
+            # Kanji is converted to hiragana.
+            new_token = token['orig']
+            if token['orig'] not in (token['hira'], token['kana']):
+                new_token = token['hira']
+            converted_tokens.append(new_token)
+
+        return Constants.WIDE_SPACE.join(converted_tokens)

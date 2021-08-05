@@ -1,4 +1,4 @@
-import argparse
+from argparse import ArgumentParser
 import random
 from textwrap import dedent
 
@@ -29,7 +29,7 @@ def _get_sentence_string(word: Word) -> str:
         return ""
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = ArgumentParser()
     parser.add_argument("word", nargs="?",
                         help="selected word for word of the day message")
     args = parser.parse_args()
