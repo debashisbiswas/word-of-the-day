@@ -1,6 +1,8 @@
 class DiscordFormat:
-    def bold(str):
+    @staticmethod
+    def bold(str) -> str:
         return f"**{str}**"
 
-    def spoiler(str):
+    @staticmethod
+    def spoiler(str) -> str:
         return f"||{str}||"
